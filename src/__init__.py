@@ -1,6 +1,6 @@
-import math
+import math 
 
- def graph_categorical(df, column_array):
+def graph_categorical(df, column_array):
     """
     Graphs the categorical columns of df specified in column_array.
     Plots the given categorical columns against the column in df labelled 'target'
