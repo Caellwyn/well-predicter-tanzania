@@ -17,6 +17,7 @@ def add_age(X):
     Adds a column indicating the age of the pump.
     Takes a dataframe as an argument.  
     Dataframe MUST include 'date_recorded' and 'construction_year' columns.
+    also imputes invalid values for 'construction_year'
     """
     if ('date_recorded' in X.columns):
         if ('construction_year' in X.columns):
@@ -80,7 +81,7 @@ def run_model(X , y, estimator, param_grid={}):
     
     gridsearch.fit(X,y)
     
-    print(gridsearch.cv_results_)
+    print(gridsearch.best_score_)
     
     return gridsearch
 
@@ -129,7 +130,7 @@ class WellProcessor:
         #create a dummy dataframe to fit correctly (date_recorded will be a float instead of a string in the
         #transform, so it needs to be that way in the fit.  Does NOT change the original dataframe passed.
         cleanX = X.copy()
-        if 'date_recorded' in cleanX.columns:
+        if ('date_recorded' in cleanX.columns) and (cleanX['date_recorded'].dtype == str):
             cleanX['date_recorded'] = cleanX[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + int(year.split(sep='-')[1])/12,2))
             
         if 'permit' in X.columns:
@@ -154,7 +155,7 @@ class WellProcessor:
             X['construction_year'] = self.num_imputer.transform(X[['construction_year']])
             
         #Change 'date_recorded' to a float
-        if 'date_recorded' in X.columns:
+        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == str):
             X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0])  + int(year.split(sep='-')[1])/12,2))
             
         # One-hot encode categorical variables
@@ -173,7 +174,6 @@ class WellProcessor:
     
         #return transformed dataframe
         return pd.concat([X_num_ss, X_hot], axis = 1)
-    
     def fit_transform(self,X,y=None):
         """
         Fits tranformer to data AND returns transformed dataframe.  DO NOT USE ON TESTING OR VALIDATION DATA! 
@@ -191,7 +191,7 @@ class WellProcessor:
             X['construction_year'] = self.num_imputer.fit_transform(X[['construction_year']])
             
         #process dates into floats
-        if 'date_recorded' in X.columns:
+        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == str):
             X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + \
                                                             int(year.split(sep='-')[1])/12,2))
 
@@ -210,4 +210,5 @@ class WellProcessor:
         
         # Return tranformed dataframe
         return pd.concat([X_num_ss, X_hot], axis = 1)
+        
         
