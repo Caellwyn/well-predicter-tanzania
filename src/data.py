@@ -12,6 +12,27 @@ from sklearn.metrics import make_scorer
 import warnings
 warnings.filterwarnings("ignore")
 
+def add_age(X):
+    """
+    Adds a column indicating the age of the pump.
+    Takes a dataframe as an argument.  
+    Dataframe MUST include 'date_recorded' and 'construction_year' columns.
+    """
+    if ('date_recorded' in X.columns):
+        if ('construction_year' in X.columns):
+            if X['date_recorded'].dtype == ('object'):
+                X['date_recorded'] = X[['date_recorded']].applymap(
+                    lambda year: round(int(year.split(sep='-')[0]) + int(year.split(sep='-')[1])/12,2))
+            X.loc[X['construction_year'] == 0, 'construction_year'] = X['construction_year'].median()
+            X['age_of_pump'] = X['date_recorded'] - X['construction_year']
+            return X
+        else:
+            print("'construction_year' not found in dataframe")
+            return X
+    else:
+        print("'date_recorded' not found in dataframe")
+        return X
+
 def well_recall(y_true,y_pred):
     """
     uses sklearn.metrics.recall_score() to return the recall score of
