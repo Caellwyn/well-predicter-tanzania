@@ -141,10 +141,16 @@ For a comprehensive explanation of each feature in the dataset, see our report n
 
 # Preparing the Data
 
-After dropping highly specific or redundant features, we scaled the numeric data so each features' values were comparable to each other.  This helps prediction models to compare features evenly without losing information.  `date_recorded` was originally full of strings of dates, but we transformed them into numbers with the whole number as the year and the decimal representing the months (1/month).  We imputed missing values We one-hot-encoded categorical features, creating a binary column for each category within them.  Algorithmic models can only understand numbers.  
+* First: we dropped very specific features and kept only one of each of the redundant features identified above.
+* Second: we scaled the numeric data so each features' values were comparable to each other.  This helps prediction models to compare features evenly without losing information.  
+* Third: `date_recorded` was originally full of strings of dates, but we transformed them into numbers with the whole number as the year and the decimal representing the months (1/month).  
+* Fourth: we imputed missing values in `permits` column, filling missing values with the most common value.  Then we replaced the '0' entries for `construction_date` with the median date.
+* Fifth: with `date_recorded` as a number and all values of `construction_year` we were able to add a feature describing the age of the pump.  We predicted this would be very important in predicting its need for maintenance.
+* Finally: We one-hot-encoded categorical features, creating a binary column for each category within them.  Algorithmic models can only understand numbers.  
 
-# The Models
+# The Model
 
+The first step in creating a predictive model is to choose a target metric.  Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non functional.  Those are the communities that are most in need of assistance and are in the worst danger.  The metric we used for this model was a recall score on non functioning wells.  This score specifically reduces false negative results, which would lead to broken wells that go unserviced.  However, it also allows for more false positives, possibly resulting in wasted trips.  However, there may be other benefits to an official visit to a remote or vulnerable population.
 
 We hope our predictive model will assist governmental and aid organizations in targeting failed wells for maintenance. Clean and functional wells save lives.
 
