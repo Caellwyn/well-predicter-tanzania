@@ -18,7 +18,6 @@ We are using the Pump it Up: Data Mining the Water Table<sup>2</sup> dataset fro
   <img width="400" height="250" src="data_exploration/figures/public_private_count.png">
 </p>
 
-
 A large number of organizations have funded and installed wells in the country, but most are managed locally by village water associations and trusts.  Some are managed by companies or private individuals.
 
 The wells have also not been uniformly distributed, as you can see on the map below.  It seems certain regions have attracted more projects than others.
@@ -34,8 +33,6 @@ The good news is that most wells in Tanzania were functioning in 2013, and innov
 <p align="center">
   <img width="400" height="250" src="data_exploration/figures/target_counts.png">
 </p>
-
-![comparision of functioning, non functioning, and wells in need of repair](data_exploration/figures/target_counts.png)
 
 # Understanding The Data
 
