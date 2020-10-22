@@ -3,8 +3,10 @@
 <p align="center">
   <img width="460" height="300" src="data_exploration/figures/HappyKid_well.jpeg">
 </p>
+<p align="center">
+photo courtesy of <a href = https://sites.google.com/site/tanzaniawateraidproject/two-solutions"> Tanzania Water Aid Project </a>
+</p>
 
-*photo courtesy of [Tanzania Water Aid Project](https://sites.google.com/site/tanzaniawateraidproject/two-solutions)
 
 # Understanding the Problem
 
