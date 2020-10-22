@@ -163,7 +163,7 @@ It performs particularly well in particular regions, as shown on the following m
 
 ![Accuracy Map of Tanzania](data_exploration/figures/accuracy_map.png)
 
-Grey regions are regions where we do not have enough data to determine our model's accuracy
+The above map shows where our model is most accurate.  Darker colors are regions of greater accuracy and lighter regions have lower accuracy.  Grey regions are regions where we do not have enough data to determine our model's accuracy.  The red dots show the distribution of broken wells in the country for comparison.  The below chart shows the regions where our model's f1 score was highest, representing the model's overall strength in predicting the state of wells in that region.
 
 ![40 regions of best accuracy](data_exploration/figures/best_accuracy_df.png)
 
