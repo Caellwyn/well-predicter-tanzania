@@ -1,4 +1,6 @@
 import math
+import matplotlib.pyplot as plt
+import pandas as pd
 
 def graph_categorical(df, column_array):
     """
@@ -21,15 +23,15 @@ def graph_categorical(df, column_array):
         print('numeric type column passed to graph_categorical')
         return None
 
-    fig, axes = plt.subplots(math.ceil(len(cols)/2),2, figsize = (10,15), sharey = True)
+    fig, axes = plt.subplots(math.ceil(len(column_array)/2),1, figsize = (10,15), sharey = True)
     axes = axes.reshape(-1)
     print(axes)
-    for i in range(len(cols)):
+    for i in range(len(column_array)):
         ax = axes[i]
-        df_grouped = pd.DataFrame(df.groupby(cols[i])['target'].value_counts(normalize=True)).unstack()
+        df_grouped = pd.DataFrame(df.groupby(column_array[i])['target'].value_counts(normalize=True)).unstack()
         df_grouped.plot.bar(ax = ax)
         ax.get_legend().remove()
-        ax.set_title(cols[i].title().replace('_'," "),fontdict = {'fontsize':15}, y = .9)
+        ax.set_title(column_array[i].title().replace('_'," "),fontdict = {'fontsize':15}, y = .9)
         ax.set_xlabel('')
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc='upper right', fontsize = 'small', fancybox = True)
