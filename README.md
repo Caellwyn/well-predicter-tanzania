@@ -152,6 +152,23 @@ For a comprehensive explanation of each feature in the dataset, see our report n
 
 The first step in creating a predictive model is to choose a target metric.  Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non functional.  Those are the communities that are most in need of assistance and are in the worst danger.  The metric we used for this model was a recall score on non functioning wells.  This score specifically reduces false negative results, which would lead to broken wells that go unserviced.  However, it also allows for more false positives, possibly resulting in wasted trips.  However, there may be other benefits to an official visit to a remote or vulnerable population.
 
+# ADD MORE HERE
+
+# Model Evaluation
+
+Our model is very accurate in identifying wells potentially needing repair.  
+# Say more here
+
+It performs particularly well in particular regions, as shown on the following map, and accompanying map.
+
+![Accuracy Map of Tanzania](data_exploration/figures/accuracy_map.png)
+
+Grey regions are regions where we do not have enough data to determine our model's accuracy
+
+![40 regions of best accuracy](data_exploration/figures/best_accuracy_df.png)
+
+
+
 We hope our predictive model will assist governmental and aid organizations in targeting failed wells for maintenance. Clean and functional wells save lives.
 
 ## References:
