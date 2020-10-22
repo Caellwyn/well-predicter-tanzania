@@ -1,6 +1,8 @@
 # Predicting Broken Wells in Tanzania
 
-![Happy Kids at Well](data_exploration/figures/HappyKid_well.jpeg)
+<p align="center">
+  <img width="460" height="300" src="data_exploration/figures/HappyKid_well.jpeg">
+</p>
 
 *photo courtesy of [Tanzania Water Aid Project](https://sites.google.com/site/tanzaniawateraidproject/two-solutions)
 
@@ -12,17 +14,26 @@ Clean water is crucial to the Tanzanian people.  Rain comes only seasonally, wit
 
 We are using the Pump it Up: Data Mining the Water Table<sup>2</sup> dataset from the Driven Data competition.  This dataset has information about wells in Tanzania recorded between 2002 and 2013.  This features of this dataset include information about when, how, and who constructed the wells, where they are located, what methods they use to extract and distribute water, water quality and quanitity, as well as how the wells are managed and how the people pay for the water they take.
 
-![Well Management Comparison](data_exploration/figures/public_private_count.png)
+<p align="center">
+  <img width="400" height="250" src="data_exploration/figures/public_private_count.png">
+</p>
+
 
 A large number of organizations have funded and installed wells in the country, but most are managed locally by village water associations and trusts.  Some are managed by companies or private individuals.
 
 The wells have also not been uniformly distributed, as you can see on the map below.  It seems certain regions have attracted more projects than others.
 
-![Map of wells and population](data_exploration/figures/well_loc_and_pop_tanzania.png)
+<p align="center">
+  <img width="800" height="600" src="data_exploration/figures/well_loc_and_pop_tanzania.png">
+</p>
 
 The blue dots are functioning wells (as of 2013) and the red dots are broken wells.  You can see how well projects have been focused in certain regions with large tracts mostly neglected.  The shade of green or yellow of each region indicates the total population of that region.  While in some cases the density of wells correlates with the population, in others it does not.
 
 The good news is that most wells in Tanzania were functioning in 2013, and innovations such as solar powered wells have reduced the cost of operation and maintenance of many wells.  However, disrepair is still an issue in many places and well maintenance can save many lives from starvation, thirst, and water-borne disease.
+
+<p align="center">
+  <img width="400" height="250" src="data_exploration/figures/target_counts.png">
+</p>
 
 ![comparision of functioning, non functioning, and wells in need of repair](data_exploration/figures/target_counts.png)
 
