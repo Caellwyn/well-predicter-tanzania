@@ -174,7 +174,7 @@ Our focus was producing the highest Recall on The model returned a Recall Score 
 Given the very high scores for all values across our training data compared to our test data, we are aware that we may have some overfitting, that needs to be addressed. We have an accuracy F-1 of 0.95 on our training data and 0.80 on our test data.
 
 <p align="center">
-  <img width="800" height="600" src="data_exploration/figures/RandomForestCM.png">
+  <img width="400" height="250" src="data_exploration/figures/RandomForestCM.png">
 </p>
 
 As we can see in the coufsion matrix above, the model performs well at predicting both the Class 2 (Functional) and Class 0 (Non-Functional) classes, however, it struggles with the Class 1 (Functional but Needs Repair) class, which is the smallest class and is underrepresented in the training data.
