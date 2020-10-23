@@ -1,14 +1,10 @@
 import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split, StratifiedKFold,GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import recall_score
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import make_scorer
+from sklearn.metrics import recall_score, make_scorer
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -130,50 +126,53 @@ class WellProcessor:
         #create a dummy dataframe to fit correctly (date_recorded will be a float instead of a string in the
         #transform, so it needs to be that way in the fit.  Does NOT change the original dataframe passed.
         cleanX = X.copy()
-        if ('date_recorded' in cleanX.columns) and (cleanX['date_recorded'].dtype == str):
+        if ('date_recorded' in cleanX.columns) and (cleanX['date_recorded'].dtype == 'object'):
             cleanX['date_recorded'] = cleanX[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + int(year.split(sep='-')[1])/12,2))
             
-        if 'permit' in X.columns:
-            self.cat_imputer.fit(X[['permit']])
-            cleanX['permit'] = self.cat_imputer.transform(cleanX[['permit']])
+        clean_X_cat = self.cat_imputer.fit_transform(cleanX.select_dtypes(include = 'object'))
             
-        if 'construction_year' in X.columns:
-            self.num_imputer.fit(cleanX[['construction_year']])
+        clean_X_num = self.num_imputer.fit_transform(cleanX.select_dtypes(include = 'number'))
             
-        self.scaler.fit(cleanX.select_dtypes(include = 'number'))
-        self.ohe.fit(cleanX.select_dtypes(include = 'object'))
+        self.scaler.fit(clean_X_num)
+        self.ohe.fit(clean_X_cat)
         
     def transform(self,X,y=None):
         """
         transforms data by imputing missing values, scaling numeric features, and one-hot encoding categorical
         feature.  Returns a transformed dataframe using the previously fitted transformers.
         """
-        #impute missing data
-        if 'permit' in X.columns:
-            X['permit'] = self.cat_imputer.transform(X[['permit']])
-        if 'construction_year' in X.columns:
-            X['construction_year'] = self.num_imputer.transform(X[['construction_year']])
-            
-        #Change 'date_recorded' to a float
-        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == str):
-            X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0])  + int(year.split(sep='-')[1])/12,2))
-            
-        # One-hot encode categorical variables
-        X_cat = X.select_dtypes(include = 'object')
         
-        X_hot = pd.DataFrame(self.ohe.transform(X_cat), 
-                            index = X_cat.index, 
-                            #columns = ohe.get_feature_names(X_cat.columns) #this does not seem to work.
+            #process dates into floats
+        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == 'object'):
+            X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + \
+                                                            int(year.split(sep='-')[1])/12,2))
+    
+        #impute missing data
+        
+        X_cat = X.select_dtypes(include = 'object')
+        X_cat_imp = pd.DataFrame(self.cat_imputer.transform(X_cat),
+                             index = X_cat.index,
+                             columns = X_cat.columns)
+        
+        X_num = X.select_dtypes(include = 'number')
+        X_num_imp = pd.DataFrame(self.num_imputer.transform(X_num),
+                     index = X_num.index,
+                     columns = X_num.columns)
+                                                            
+        # One-hot encode categorical variables
+        X_hot = pd.DataFrame(self.ohe.transform(X_cat_imp), 
+                            index = X_cat_imp.index, 
+                            columns = self.ohe.get_feature_names(X_cat_imp.columns)
                             )
         
-        #scale numeric
-        X_num = X.select_dtypes(include = 'number')
-        X_num_ss = pd.DataFrame(self.scaler.transform(X_num), 
-                                index = X_num.index, 
-                                columns = X_num.columns)
-    
-        #return transformed dataframe
+        # Scale numeric variables
+        X_num_ss = pd.DataFrame(self.scaler.transform(X_num_imp), 
+                                index = X_num_imp.index, 
+                                columns = X_num_imp.columns)
+        
+        # Return tranformed dataframe
         return pd.concat([X_num_ss, X_hot], axis = 1)
+    
     def fit_transform(self,X,y=None):
         """
         Fits tranformer to data AND returns transformed dataframe.  DO NOT USE ON TESTING OR VALIDATION DATA! 
@@ -184,31 +183,34 @@ class WellProcessor:
         self.ohe = OneHotEncoder(categories = 'auto', sparse = False, dtype = int, handle_unknown = 'ignore')
         self.scaler = StandardScaler()
     
-        #impute missing data
-        if 'permit' in X.columns:
-            X['permit'] = self.cat_imputer.fit_transform(X[['permit']])
-        if 'construction_year' in X.columns:
-            X['construction_year'] = self.num_imputer.fit_transform(X[['construction_year']])
-            
-        #process dates into floats
-        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == str):
+            #process dates into floats
+        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == 'object'):
             X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + \
                                                             int(year.split(sep='-')[1])/12,2))
-
-        # One-hot encode categorical variables
+        print(X['date_recorded'].dtype)
+    
+        #impute missing data
+        
         X_cat = X.select_dtypes(include = 'object')
-
-        X_hot = pd.DataFrame(self.ohe.fit_transform(X_cat), 
-                            index = X_cat.index, 
-                            columns = self.ohe.get_feature_names(X_cat.columns)
-                            )
-        # Scale numeric variables
+        X_cat_imp = pd.DataFrame(self.cat_imputer.fit_transform(X_cat),
+                             index = X_cat.index,
+                             columns = X_cat.columns)
+        
         X_num = X.select_dtypes(include = 'number')
-        X_num_ss = pd.DataFrame(self.scaler.fit_transform(X_num), 
-                                index = X_num.index, 
-                                columns = X_num.columns)
+        X_num_imp = pd.DataFrame(self.num_imputer.fit_transform(X_num),
+                     index = X_num.index,
+                     columns = X_num.columns)
+                                                            
+        # One-hot encode categorical variables
+        X_hot = pd.DataFrame(self.ohe.fit_transform(X_cat_imp), 
+                            index = X_cat_imp.index, 
+                            columns = self.ohe.get_feature_names(X_cat_imp.columns)
+                            )
+        
+        # Scale numeric variables
+        X_num_ss = pd.DataFrame(self.scaler.fit_transform(X_num_imp), 
+                                index = X_num_imp.index, 
+                                columns = X_num_imp.columns)
         
         # Return tranformed dataframe
         return pd.concat([X_num_ss, X_hot], axis = 1)
-        
-        
