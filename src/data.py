@@ -89,12 +89,18 @@ def load_data():
     Set y to numeric classes
     Returns X (features) and y (labels)
     """
-    X = pd.read_csv('../data/training_set_values.csv', index_col = 'id')
-    y = pd.read_csv('../data/training_set_labels.csv', index_col = 'id')
+    #Download data from drivendata's git repo
+    X = pd.read_csv('https://github.com/drivendataorg/pump-it-up/raw/master/data/training_values.csv', index_col = 'id')
+    y = pd.read_csv('https://github.com/drivendataorg/pump-it-up/raw/master/data/training_labels.csv', index_col = 'id')
+    
+    #drop redundant and overly specific columns
     X.drop(columns = ['funder','installer','wpt_name','subvillage','ward',
                       'recorded_by','scheme_name','public_meeting','scheme_management'], inplace = True)
     y.replace(to_replace = ['non functional','functional needs repair','functional'],
              value = [0,1,2], inplace = True)
+    
+    #transform date_recorded into floats
+    X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + int(year.split(sep='-')[1])/12,2))
     return X, y
 
 class WellProcessor:
@@ -125,13 +131,10 @@ class WellProcessor:
         
         #create a dummy dataframe to fit correctly (date_recorded will be a float instead of a string in the
         #transform, so it needs to be that way in the fit.  Does NOT change the original dataframe passed.
-        cleanX = X.copy()
-        if ('date_recorded' in cleanX.columns) and (cleanX['date_recorded'].dtype == 'object'):
-            cleanX['date_recorded'] = cleanX[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + int(year.split(sep='-')[1])/12,2))
+          
+        clean_X_cat = self.cat_imputer.fit_transform(X.select_dtypes(include = 'object'))
             
-        clean_X_cat = self.cat_imputer.fit_transform(cleanX.select_dtypes(include = 'object'))
-            
-        clean_X_num = self.num_imputer.fit_transform(cleanX.select_dtypes(include = 'number'))
+        clean_X_num = self.num_imputer.fit_transform(X.select_dtypes(include = 'number'))
             
         self.scaler.fit(clean_X_num)
         self.ohe.fit(clean_X_cat)
@@ -141,11 +144,6 @@ class WellProcessor:
         transforms data by imputing missing values, scaling numeric features, and one-hot encoding categorical
         feature.  Returns a transformed dataframe using the previously fitted transformers.
         """
-        
-            #process dates into floats
-        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == 'object'):
-            X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + \
-                                                            int(year.split(sep='-')[1])/12,2))
     
         #impute missing data
         
@@ -182,13 +180,7 @@ class WellProcessor:
         self.num_imputer = SimpleImputer(missing_values = 0, strategy = 'median')
         self.ohe = OneHotEncoder(categories = 'auto', sparse = False, dtype = int, handle_unknown = 'ignore')
         self.scaler = StandardScaler()
-    
-            #process dates into floats
-        if ('date_recorded' in X.columns) and (X['date_recorded'].dtype == 'object'):
-            X['date_recorded'] = X[['date_recorded']].applymap(lambda year: round(int(year.split(sep='-')[0]) + \
-                                                            int(year.split(sep='-')[1])/12,2))
-        print(X['date_recorded'].dtype)
-    
+        
         #impute missing data
         
         X_cat = X.select_dtypes(include = 'object')
