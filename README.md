@@ -10,19 +10,19 @@ photo courtesy of <a href = https://sites.google.com/site/tanzaniawateraidprojec
 
 # Understanding the Problem
 
-Clean water is crucial to the Tanzanian people.  Rain comes only seasonally, with long wet and dry seasons, and many water sources are seasonal as well.  Unclean water is responsible for many deaths from typhoid and other diseases.  
+Clean water is crucial to the Tanzanian people.  Rain comes only seasonally with long wet and dry seasons, and many community water sources are seasonal as well. 
 
 >4 million people in Tanzania lack access to an improved source of safe water, and 30 million don't have access to improved sanitation. People living under these circumstances, >particularly women and girls, spend a significant amount of time traveling long distances to collect water. <sup>1</sup>
 
-We are using the Pump it Up: Data Mining the Water Table<sup>2</sup> dataset from the Driven Data competition.  This dataset has information about wells in Tanzania recorded between 2002 and 2013.  This features of this dataset include information about when, how, and who constructed the wells, where they are located, what methods they use to extract and distribute water, water quality and quanitity, as well as how the wells are managed and how the people pay for the water they take.
+We used the Pump it Up: Data Mining the Water Table<sup>2</sup> dataset from the Driven Data competition.  This dataset has information about wells in Tanzania recorded between 2002 and 2013.  The features of this dataset include information about when, how, and who constructed the wells, where they are located, what methods they use to extract and distribute water, water quality and quantity, well management and how individuals pay for the water they take.
 
 <p align="center">
   <img width="400" height="250" src="data_exploration/figures/public_private_count.png">
 </p>
 
-A large number of organizations have funded and installed wells in the country, but most are managed locally by village water associations and trusts.  Some are managed by companies or private individuals.
+A large number of organizations have funded and installed wells in the country. Most are now managed locally by village water associations and trusts, but some are managed by for-profit companies or private individuals.
 
-The wells have also not been uniformly distributed, as you can see on the map below.  It seems certain regions have attracted more projects than others.
+The wells are not uniformly distributed, as you can see on the map below.  It seems certain regions have attracted more projects than others.
 
 <p align="center">
   <img width="800" height="600" src="data_exploration/figures/well_loc_and_pop_tanzania.png">
@@ -38,7 +38,7 @@ The good news is that most wells in Tanzania were functioning in 2013, and innov
 
 # Understanding The Data
 
-The dataset we used contains volumnious and often redundant information about each well.  Many features were mostly redundant, such as `water_quality` and `water_quality_group` or `scheme_management` and `management`.  Others had too many categorical values to encode, or were so specific to each well as to be of little use in making predictions such as `scheme_name` or `installer`. Here is a comprehensive description of each feature:
+The dataset we used contains volumnious and often redundant information about each well.  Many features were overlapping, such as `water_quality` and `water_quality_group` or `scheme_management` and `management`.  Others had too many categorical values to encode, or were to specific to be useful in making predictions, such as `scheme_name` or `installer`. Here is a comprehensive description of the features and their meanings:
 
 ## Features:
 1. `amount_tsh`: total static head.  How high the water gets pumped from where it starts.
@@ -74,7 +74,7 @@ The dataset we used contains volumnious and often redundant information about ea
 31. `source`/`source_type`/`source_class`: where the water from the well comes from 
 32. `waterpoint_type`/`waterpoint_type_group`: type of extraction point, what users interact with to get water.
 
-### Redundant Features:
+### Redundant and Overlapping Features:
 1. basin, subvillage, region, region code, district code, lga, ward: 
 2. water_quality, and quality_group
 3. quantity, quantity group
@@ -84,9 +84,7 @@ The dataset we used contains volumnious and often redundant information about ea
 7. management, management_group, scheme_management
 8. extraction_type, extraction_type_class, extraction_type_group
 
-And here we offer some additional explanation to understand some of these features, taken from outside sources:
-
-
+Here is some supplemental information about the categories of some of these features, taken from outside sources:
 
 ### Water Management Types: <sup>3</sup>
 
@@ -160,24 +158,31 @@ For a comprehensive explanation of each feature in the dataset, see our report n
 
 # The Model
 
-The first step in creating a predictive model is to choose a target metric.  Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non functional.  Those are the communities that are most in need of assistance and are in the worst danger.  The metric we used for this model was a recall score on non functioning wells.  This score specifically reduces false negative results, which would lead to broken wells that go unserviced.  However, it also allows for more false positives, possibly resulting in wasted trips.  However, there may be other benefits to an official visit to a remote or vulnerable population.
+Our first step in creating a predictive model was to choose a target metric.  Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non functional.  Those are the communities that are most in need of assistance and are in the worst danger.  The metric we used for this model was a recall score on non functioning wells.  This score specifically reduces false negative results, which would lead to broken wells that go unserviced.  However, it also allows for more false positives, possibly resulting in wasted trips for teams deployed to repair them.  There may, however, be other benefits to an official visit to a remote or vulnerable population.
 
 # ADD MORE HERE
 
 # Model Evaluation
 
-Our model is very accurate in identifying wells potentially needing repair.  
+Our model is very accurate in identifying wells potentially needing repair.
 # Say more here
 
-It performs particularly well in particular regions, as shown on the following map, and accompanying map.
+# Business Deployment
+
+We optimized our model to predict as many non functioning wells as possible, however we understand that deploying teams to remote regions to repair wells is costly both in time and resources.  
+
+The map below shows the regions where our model is overall most accurate in classifying wells as non functioning, well functioning or functioning but in need of repair.
 
 ![Accuracy Map of Tanzania](data_exploration/figures/accuracy_map.png)
 
-The above map shows where our model is most accurate.  Darker colors are regions of greater accuracy and lighter regions have lower accuracy.  Grey regions are regions where we do not have enough data to determine our model's accuracy.  The red dots show the distribution of broken wells in the country for comparison.  The below chart shows the regions where our model's f1 score was highest, representing the model's overall strength in predicting the state of wells in that region.
+Since resources for emergency well repair may be limited, the following list shows where our model is most certain about about the wells it flags as non functional.  In these regions, teams deployed to fix wells will make the fewest wasted trips.
 
-![40 regions of best accuracy](data_exploration/figures/best_accuracy_df.png)
+![Regions of best precision](data_exploration/figures/best_accuracy_df.png)
 
 
+# Summary
+
+We addressed the problem of broken wells and communities without access to clean water in Tanzania by creating a predictive model to identify wells that will cease to provide this important resource.  We studied the problem and the data available, iterated through several model prototypes, and developed a model successfully predicts almost 80% of failing wells.  Since our model was not uniformly accurate in all regions of the country, we identified those regions where our model could most efficiently be used to provide emergency maintenance to wells serving local populations.
 
 We hope our predictive model will assist governmental and aid organizations in targeting failed wells for maintenance. Clean and functional wells save lives.
 
@@ -186,6 +191,6 @@ We hope our predictive model will assist governmental and aid organizations in t
 
 <sup>2</sup> "Pump it Up: Data Mining the Water Table" [DrivenData.org](https://www.drivendata.org/competitions/7/pump-it-up-data-mining-the-water-table/page/23/)
 
-<sup>3</sup>[PRIVATE OPERATION IN THE RURAL WATER SUPPLY IN CENTRAL TANZANIA: QUICK FIXES AND SLOW TRANSITIONS](https://washmatters.wateraid.org/publications/private-operation-in-the-rural-water-supply-in-central-tanzania-quick-fixes-and-slow)
+<sup>3</sup> (.pdf) [PRIVATE OPERATION IN THE RURAL WATER SUPPLY IN CENTRAL TANZANIA: QUICK FIXES AND SLOW TRANSITIONS](https://washmatters.wateraid.org/publications/private-operation-in-the-rural-water-supply-in-central-tanzania-quick-fixes-and-slow) Moon, Sam.  August 2006
 
 <sup>4</sup> "Subdivisions of Tanzania" [wikipedia](https://en.wikipedia.org/wiki/Subdivisions_of_Tanzania)
