@@ -12,7 +12,7 @@ photo courtesy of <a href = https://sites.google.com/site/tanzaniawateraidprojec
 
 Clean water is crucial to the Tanzanian people.  Rain comes only seasonally with long wet and dry seasons, and many community water sources are seasonal as well. 
 
->4 million people in Tanzania lack access to an improved source of safe water, and 30 million don't have access to improved sanitation. People living under these circumstances, >particularly women and girls, spend a significant amount of time traveling long distances to collect water. <sup>1</sup>
+>4 million people in Tanzania lack access to an improved source of safe water, and 30 million don't have access to improved sanitation. People living under these circumstances, particularly women and girls, spend a significant amount of time traveling long distances to collect water. <sup>1</sup>
 
 We used the Pump it Up: Data Mining the Water Table<sup>2</sup> dataset from the Driven Data competition.  This dataset has information about wells in Tanzania recorded between 2002 and 2013.  The features of this dataset include information about when, how, and who constructed the wells, where they are located, what methods they use to extract and distribute water, water quality and quantity, well management and how individuals pay for the water they take.
 
