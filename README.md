@@ -157,15 +157,24 @@ For a comprehensive explanation of each feature in the dataset, see our report n
 * Finally: We one-hot-encoded categorical features, creating a binary column for each category within them.  Algorithmic models can only understand numbers.  
 
 # The Model
+Our first step in creating a predictive model was to choose a target metric. Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non-functional. Those are the communities that are most in need of assistance and are in the worst danger. The metric we used for this model was a recall score on non-functioning wells. This score specifically reduces false-negative results, which would lead to broken wells that go unserviced. However, it also allows for more false positives, possibly resulting in wasted trips for teams deployed to repair them. There may, however, be other benefits to an official visit to a remote or vulnerable population.
 
-Our first step in creating a predictive model was to choose a target metric.  Communities without a reliable water source face death, disease, and hardship, so we decided to create a model that prioritizes identifying wells that are or will soon be non functional.  Those are the communities that are most in need of assistance and are in the worst danger.  The metric we used for this model was a recall score on non functioning wells.  This score specifically reduces false negative results, which would lead to broken wells that go unserviced.  However, it also allows for more false positives, possibly resulting in wasted trips for teams deployed to repair them.  There may, however, be other benefits to an official visit to a remote or vulnerable population.
+Our first model was XGBoost, which is one of the strongest models on the market currently. We wanted to start with a strong model to see what kind of results it can give as a starting point. While XGBoost gave great results with default hyperparameters, it took a minimum of 12minutes to run and was very computationally expensive. We wanted to compare its results to more efficient models.
 
-# ADD MORE HERE
+Our next model was a Decision Tree. We chose this as a model to compare to XGBoost which is simpler but still could deal with complex models. We also wanted a model that could execute faster than XGBoost. While our Decision Tree Classifier gave good results we went on to try the more complex Random Forest Classifier to compare it to. We have had great success with Random Forest in previous work, so it seemed like a natural choice. The model performed the best out of all our models tested. The Random Forest model was also faster than our XGBoost model.
+
+After hyper tuning select parameters to improve the quality of our model and reduce our model overfitting on the training data we settled on a RandomForestClassifier with n_estimators set to 500, class_weight set at balanced_subsample, and max_depth equalling 25. The rest of the parameters were left as default variables.
+
 
 # Model Evaluation
 
-Our model is very accurate in identifying wells potentially needing repair.
-# Say more here
+Our focus was producing the highest Recall on The model returned a Recall Score on Class 0 ('Non-Functioning') of .77 on the test set, and a 0.93
+ on the training set. Recall on Class 0 measures what percentage of the truly non-functioning wells our model correctly identifies. Our model correctly predicts truly non-functioning wells 77% of the time on our test data.
+
+Given the very high scores for all values across our training data compared to our test data, we are aware that we may have some overfitting, that needs to be addressed. We have an accuracy F-1 of 0.95 on our training data and 0.80 on our test data.
+The model performs well at predicting both the Class 2 (Functional) and Class 0 (Non-Functional) classes, however, it struggles with the Class 1 (Functional but Needs Repair) class, which is the smallest class and is underrepresented in the training data.
+ 
+
 
 # Business Deployment
 
